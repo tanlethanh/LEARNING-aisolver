@@ -46,6 +46,28 @@ class QueueFrontier(Frontier):
         return self.frontier.pop(0)
 
 
-class PriorityQueueFrontier(QueueFrontier):
+class PriorityQueueFrontier(StackFrontier):
+    def get_node_pos(self, state):
+        for i in range(len(self.frontier)):
+            if self.frontier[i] == state:
+                return i
+        return -1
+
+    def remove(self, pos):
+        if pos < 0 or pos >= len(self.frontier):
+            raise Exception("Out of index")
+        else:
+            self.frontier = self.frontier[:pos] + self.frontier[pos+1:]
+
     def append(self, state):
-        pass
+        x = self.get_node_pos(state)
+        if x != -1:
+            if self.frontier[x] > state:
+                self.remove(x)
+        index = 0
+        for i in self.frontier:
+            if i < state:
+                self.frontier.insert(index, state)
+                return
+            index += 1
+        self.frontier.append(state)
